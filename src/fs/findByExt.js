@@ -24,11 +24,11 @@ const findByExt = async () => {
 
 		const files = entries
 			.filter((e) => e.isFile() && extname(e.name) === ext)
-			.map((e) => join(e.parentPath, e.name).replace(rootPath + "/", ""))
+			.map((e) => join(e.parentPath, e.name).replace(`${rootPath}/`, ""))
 			.sort((a, b) => a.localeCompare(b));
 
 		console.log(files.join("\n"));
-	} catch (err) {
+	} catch {
 		throw new Error("FS operation failed");
 	}
 };
