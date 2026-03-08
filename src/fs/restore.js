@@ -9,7 +9,7 @@ const restore = async () => {
 
 	try {
 		snapshotData = JSON.parse(await readFile(snapshotPath, "utf-8"));
-	} catch (err) {
+	} catch {
 		throw new Error("FS operation failed");
 	}
 
@@ -19,7 +19,7 @@ const restore = async () => {
 		await stat(outputPath);
 		throw new Error("FS operation failed");
 	} catch (err) {
-		if (err.message === "FS operation failed") throw err;
+		if (err.code !== "ENOENT") throw err;
 		await mkdir(outputPath, { recursive: true });
 	}
 
