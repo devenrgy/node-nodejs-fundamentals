@@ -6,38 +6,42 @@ const outputPath = join(import.meta.dirname, "snapshot.json");
 
 const snapshot = async () => {
 	try {
-		(await stat(rootPath)).isDirectory();
+		await stat(rootPath);
 	} catch {
 		throw new Error("FS operation failed");
 	}
 
 	const entries = [];
-	const items = await readdir(rootPath, { recursive: true });
+	const items = await readdir(rootPath, {
+		recursive: true,
+		withFileTypes: true,
+	});
 
-	for (const relPath of items) {
-		const fullPath = join(rootPath, relPath);
-		const stats = await stat(fullPath);
+	for (const entry of items) {
+		const relPath = entry.parentPath
+			? join(entry.parentPath.replace(rootPath + "/", ""), entry.name)
+			: entry.name;
 
-		if (stats.isDirectory()) {
+		if (entry.isDirectory()) {
 			entries.push({
 				path: relPath,
 				type: "directory",
 			});
-		} else if (stats.isFile()) {
-			const content = await readFile(fullPath, "base64");
+		} else if (entry.isFile()) {
+			const content = await readFile(join(rootPath, relPath), "base64");
 
 			entries.push({
 				path: relPath,
 				type: "file",
-				size: stats.size,
+				size: entry.size,
 				content,
 			});
 		}
 	}
 
-	const snapshot = { rootPath, entries };
+	const snapshotData = { rootPath, entries };
 
-	await writeFile(outputPath, JSON.stringify(snapshot, null, 2));
+	await writeFile(outputPath, JSON.stringify(snapshotData, null, 2));
 };
 
 await snapshot();
