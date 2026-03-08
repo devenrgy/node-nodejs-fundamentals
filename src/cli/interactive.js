@@ -2,7 +2,7 @@ import { stdin as input, stdout as output } from "node:process";
 import * as readline from "node:readline/promises";
 
 const interactive = async () => {
-	const rl = readline.createInterface({ input, output, prompt: "> " });
+	const rl = readline.createInterface({ input, output });
 
 	const goodbye = () => {
 		console.log("Goodbye!");
@@ -12,8 +12,7 @@ const interactive = async () => {
 	rl.on("close", goodbye);
 
 	while (true) {
-		rl.prompt();
-		const answer = await new Promise((resolve) => rl.once("line", resolve));
+		const answer = await rl.question("> ");
 
 		switch (answer) {
 			case "uptime":
@@ -26,9 +25,8 @@ const interactive = async () => {
 				console.log(new Date().toISOString());
 				break;
 			case "exit":
-				rl.off("close", goodbye);
-				console.log("Goodbye!");
-				process.exit(0);
+				rl.close();
+				break;
 			default:
 				console.log("Unknown command");
 		}
