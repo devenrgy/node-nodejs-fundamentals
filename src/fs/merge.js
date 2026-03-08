@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { access, readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { parseArgs } from "node:util";
 
@@ -21,6 +21,13 @@ const merge = async () => {
 	try {
 		if (values.files) {
 			fileNames = values.files.split(",");
+			for (const name of fileNames) {
+				try {
+					await access(join(partsPath, name));
+				} catch {
+					throw new Error("FS operation failed");
+				}
+			}
 		} else {
 			const entries = await readdir(partsPath, { withFileTypes: true });
 			fileNames = entries
