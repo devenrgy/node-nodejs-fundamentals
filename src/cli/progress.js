@@ -26,9 +26,9 @@ const progress = () => {
 		},
 	});
 
-	const totalDuration = parseInt(cliOptions.duration);
-	const updateInterval = parseInt(cliOptions.interval);
-	const barLength = parseInt(cliOptions.length);
+	const totalDuration = Number(cliOptions.duration);
+	const updateInterval = Number(cliOptions.interval);
+	const barLength = Number(cliOptions.length);
 	const rgbColor = parseHexColor(cliOptions.color);
 
 	const totalSteps = Math.ceil(totalDuration / updateInterval);
